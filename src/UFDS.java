@@ -48,6 +48,4 @@ public class UFDS {
         return size[findSet(i)];
     }
 
-    public static void main(String[] args) {
-    }
 }
