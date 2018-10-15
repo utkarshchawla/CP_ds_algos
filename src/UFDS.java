@@ -2,13 +2,16 @@
 public class UFDS {
     private int[] parent;
     private int[] rank;
+    private int[] size;
     private int numSets;
 
     public UFDS(int n) {
         this.parent = new int[n];
         this.rank = new int[n];
+        this.size = new int[n];
         this.numSets = n;
         for (int i = 0; i < parent.length; i++) {
+            size[i] = 1;
             parent[i] = i;
         }
     }
@@ -29,14 +32,20 @@ public class UFDS {
         int y = findSet(j);
         if (rank[x] > rank[y]) {
             parent[y] = x;
+            size[x] += size[y];
         } else {
             parent[x] = y;
+            size[y] += size[x];
             if (rank[x] == rank[y]) rank[y]++;
         }
     }
 
     public int getNumSets() {
         return numSets;
+    }
+
+    public int getSize(int i) {
+        return size[findSet(i)];
     }
 
     public static void main(String[] args) {
