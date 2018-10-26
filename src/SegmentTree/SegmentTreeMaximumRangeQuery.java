@@ -1,12 +1,11 @@
 package SegmentTree;
 
-
-public class SegmentTreeMinimumRangeQuery {
+public class SegmentTreeMaximumRangeQuery {
     private int segmentTree[];
     private int lazy[];
     private int input[];
 
-    private SegmentTreeMinimumRangeQuery(int[] input) {
+    private SegmentTreeMaximumRangeQuery(int[] input) {
         input = input;
         segmentTree = createSegmentTree();
         lazy = new int[segmentTree.length];
@@ -33,9 +32,9 @@ public class SegmentTreeMinimumRangeQuery {
         int segmentTree[] = new int[nextPowOfTwo * 2 - 1];
 
         for (int i = 0; i < segmentTree.length; i++) {
-            segmentTree[i] = Integer.MAX_VALUE;
+            segmentTree[i] = Integer.MIN_VALUE;
         }
-        constructMinSegmentTree(0, input.length - 1, 0);
+        constructMaxSegmentTree(0, input.length - 1, 0);
         return segmentTree;
     }
 
@@ -51,27 +50,27 @@ public class SegmentTreeMinimumRangeQuery {
         updateSegmentTreeRange(startRange, endRange, delta, 0, input.length - 1, 0);
     }
 
-    private int rangeMinimumQuery(int qlow, int qhigh) {
-        return rangeMinimumQuery(0, input.length - 1, qlow, qhigh, 0);
+    private int rangeMaximumQuery(int qlow, int qhigh) {
+        return rangeMaximumQuery(0, input.length - 1, qlow, qhigh, 0);
     }
 
     private void updateSegmentTreeRangeLazy(int startRange, int endRange, int delta) {
         updateSegmentTreeRangeLazy(startRange, endRange, delta, 0, input.length - 1, 0);
     }
 
-    private int rangeMinimumQueryLazy(int qlow, int qhigh) {
-        return rangeMinimumQueryLazy(qlow, qhigh, 0, input.length - 1, 0);
+    private int rangeMaximumQueryLazy(int qlow, int qhigh) {
+        return rangeMaximumQueryLazy(qlow, qhigh, 0, input.length - 1, 0);
     }
 
-    private void constructMinSegmentTree(int low, int high, int pos) {
+    private void constructMaxSegmentTree(int low, int high, int pos) {
         if (low == high) {
             segmentTree[pos] = input[low];
             return;
         }
         int mid = (low + high) / 2;
-        constructMinSegmentTree(low, mid, 2 * pos + 1);
-        constructMinSegmentTree(mid + 1, high, 2 * pos + 2);
-        segmentTree[pos] = Math.min(segmentTree[2 * pos + 1], segmentTree[2 * pos + 2]);
+        constructMaxSegmentTree(low, mid, 2 * pos + 1);
+        constructMaxSegmentTree(mid + 1, high, 2 * pos + 2);
+        segmentTree[pos] = Math.max(segmentTree[2 * pos + 1], segmentTree[2 * pos + 2]);
     }
 
     private void updateSegmentTree(int index, int delta, int low, int high, int pos) {
@@ -93,7 +92,7 @@ public class SegmentTreeMinimumRangeQuery {
         int mid = (low + high) / 2;
         updateSegmentTree(index, delta, low, mid, 2 * pos + 1);
         updateSegmentTree(index, delta, mid + 1, high, 2 * pos + 2);
-        segmentTree[pos] = Math.min(segmentTree[2 * pos + 1], segmentTree[2 * pos + 2]);
+        segmentTree[pos] = Math.max(segmentTree[2 * pos + 1], segmentTree[2 * pos + 2]);
     }
 
     private void updateSegmentTreeRange(int startRange, int endRange, int delta, int low, int high, int pos) {
@@ -109,19 +108,19 @@ public class SegmentTreeMinimumRangeQuery {
         int middle = (low + high) / 2;
         updateSegmentTreeRange(startRange, endRange, delta, low, middle, 2 * pos + 1);
         updateSegmentTreeRange(startRange, endRange, delta, middle + 1, high, 2 * pos + 2);
-        segmentTree[pos] = Math.min(segmentTree[2 * pos + 1], segmentTree[2 * pos + 2]);
+        segmentTree[pos] = Math.max(segmentTree[2 * pos + 1], segmentTree[2 * pos + 2]);
     }
 
-    private int rangeMinimumQuery(int low, int high, int qlow, int qhigh, int pos) {
+    private int rangeMaximumQuery(int low, int high, int qlow, int qhigh, int pos) {
         if (qlow <= low && qhigh >= high) {
             return segmentTree[pos];
         }
         if (qlow > high || qhigh < low) {
-            return Integer.MAX_VALUE;
+            return Integer.MIN_VALUE;
         }
         int mid = (low + high) / 2;
-        return Math.min(rangeMinimumQuery(low, mid, qlow, qhigh, 2 * pos + 1),
-                rangeMinimumQuery(mid + 1, high, qlow, qhigh, 2 * pos + 2));
+        return Math.max(rangeMaximumQuery(low, mid, qlow, qhigh, 2 * pos + 1),
+                rangeMaximumQuery(mid + 1, high, qlow, qhigh, 2 * pos + 2));
     }
 
     private void updateSegmentTreeRangeLazy(int startRange, int endRange, int delta, int low, int high, int pos) {
@@ -159,13 +158,13 @@ public class SegmentTreeMinimumRangeQuery {
         int mid = (low + high) / 2;
         updateSegmentTreeRangeLazy(startRange, endRange, delta, low, mid, 2 * pos + 1);
         updateSegmentTreeRangeLazy(startRange, endRange, delta, mid + 1, high, 2 * pos + 2);
-        segmentTree[pos] = Math.min(segmentTree[2 * pos + 1], segmentTree[2 * pos + 2]);
+        segmentTree[pos] = Math.max(segmentTree[2 * pos + 1], segmentTree[2 * pos + 2]);
     }
 
-    private int rangeMinimumQueryLazy(int qlow, int qhigh, int low, int high, int pos) {
+    private int rangeMaximumQueryLazy(int qlow, int qhigh, int low, int high, int pos) {
 
         if (low > high) {
-            return Integer.MAX_VALUE;
+            return Integer.MIN_VALUE;
         }
 
         //make sure all propagation is done at pos. If not update tree
@@ -181,7 +180,7 @@ public class SegmentTreeMinimumRangeQuery {
 
         //no overlap
         if (qlow > high || qhigh < low) {
-            return Integer.MAX_VALUE;
+            return Integer.MIN_VALUE;
         }
 
         //total overlap
@@ -191,30 +190,8 @@ public class SegmentTreeMinimumRangeQuery {
 
         //partial overlap
         int mid = (low + high) / 2;
-        return Math.min(rangeMinimumQueryLazy(qlow, qhigh, low, mid, 2 * pos + 1),
-                rangeMinimumQueryLazy(qlow, qhigh, mid + 1, high, 2 * pos + 2));
+        return Math.max(rangeMaximumQueryLazy(qlow, qhigh, low, mid, 2 * pos + 1),
+                rangeMaximumQueryLazy(qlow, qhigh, mid + 1, high, 2 * pos + 2));
 
-    }
-
-    public static void main(String args[]) {
-        int input[] = {0, 3, 4, 2, 1, 6, -1};
-        SegmentTreeMinimumRangeQuery st = new SegmentTreeMinimumRangeQuery(input);
-
-        //non lazy propagation example
-        assert 0 == st.rangeMinimumQuery(0, 3);
-        assert 1 == st.rangeMinimumQuery(1, 5);
-        assert -1 == st.rangeMinimumQuery(1, 6);
-        st.updateSegmentTree(2, 1);
-        assert 2 == st.rangeMinimumQuery(1, 3);
-        st.updateSegmentTreeRange(3, 5, -2);
-        assert -1 == st.rangeMinimumQuery(5, 6);
-        assert 0 == st.rangeMinimumQuery(0, 3);
-
-        //lazy propagation example
-        int input1[] = {-1, 2, 4, 1, 7, 1, 3, 2};
-        st = new SegmentTreeMinimumRangeQuery(input1);
-        st.updateSegmentTreeRangeLazy(0, 3, 1);
-        st.updateSegmentTreeRangeLazy(0, 0, 2);
-        assert 1 == st.rangeMinimumQueryLazy(3, 5);
     }
 }
